@@ -85,8 +85,6 @@ void screenformfactor::parent_changed(QQuickItem *item)
     if (!item)
         return;
 
-    // the old style for connecting signal to slot.
-    // connect(item, SIGNAL(widthChanged()), this, SLOT(set_form_factor()));
     connect(item, &screenformfactor::widthChanged, this, &screenformfactor::set_form_factor);
 }
 
