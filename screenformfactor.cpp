@@ -43,6 +43,20 @@ void screenformfactor::set_is_tv(bool is_tv)
     emit is_tv_changed();
 }
 
+void screenformfactor::force_detect()
+{
+    if (!this->parentItem())
+        return;
+
+    this->m_is_tv = false;
+    this->m_is_desktop = false;
+    this->m_is_phablet = false;
+    this->m_is_tablet = false;
+    this->m_is_phone = false;
+    this->m_form_factor = e_form_factor::NONE;
+    set_form_factor(true);
+}
+
 void screenformfactor::set_is_desktop(bool is_desktop)
 {
     if (is_desktop == m_is_desktop)
@@ -85,12 +99,12 @@ void screenformfactor::parent_changed(QQuickItem *item)
     if (!item)
         return;
 
-    connect(item, &screenformfactor::widthChanged, this, &screenformfactor::set_form_factor);
+    connect(item, SIGNAL(widthChanged()), this, SLOT(set_form_factor()));
 }
 
-void screenformfactor::set_form_factor()
+void screenformfactor::set_form_factor(bool force)
 {
-    if (qFabs(old_width - parentItem()->width()) < 15)
+    if (!force && qFabs(old_width - parentItem()->width()) < 15)
         return;
 
     old_width = parentItem()->width();
