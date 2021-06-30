@@ -31,8 +31,10 @@ public:
     void set_is_desktop(bool is_desktop);
     void set_is_tv(bool is_tv);
 
+    Q_INVOKABLE void force_detect();
+
 private:
-    qreal old_width=0;
+    qreal old_width = 0;
     screenformfactor::e_form_factor m_form_factor;
 
     bool is_phone() const;
@@ -48,7 +50,7 @@ private:
     bool m_is_tv;
 
 public slots:
-    void set_form_factor();
+    void set_form_factor(bool force = false);
     void parent_changed(QQuickItem* item);
 
 signals:
