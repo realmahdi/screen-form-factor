@@ -30,17 +30,9 @@ bool screenformfactor::is_desktop() const
     return m_is_desktop;
 }
 
-bool screenformfactor::is_tv() const
+bool screenformfactor::is_laptop() const
 {
-    return m_is_tv;
-}
-
-void screenformfactor::set_is_tv(bool is_tv)
-{
-    if (is_tv == m_is_tv)
-        return;
-    m_is_tv = is_tv;
-    emit is_tv_changed();
+    return m_is_laptop;
 }
 
 void screenformfactor::force_detect()
@@ -48,8 +40,8 @@ void screenformfactor::force_detect()
     if (!this->parentItem())
         return;
 
-    this->m_is_tv = false;
     this->m_is_desktop = false;
+    this->m_is_laptop = false;
     this->m_is_phablet = false;
     this->m_is_tablet = false;
     this->m_is_phone = false;
@@ -63,6 +55,14 @@ void screenformfactor::set_is_desktop(bool is_desktop)
         return;
     m_is_desktop = is_desktop;
     emit is_desktop_changed();
+}
+
+void screenformfactor::set_is_laptop(bool is_laptop)
+{
+    if (is_laptop == m_is_laptop)
+        return;
+    m_is_laptop = is_laptop;
+    emit is_laptop_changed();
 }
 
 void screenformfactor::set_is_tablet(bool is_tablet)
@@ -111,36 +111,37 @@ void screenformfactor::set_form_factor(bool force)
     qreal _width = parentItem()->width();
 
     e_form_factor new_form_factor = e_form_factor::NONE;
-    if (_width >= 0 && _width < 599 )
+    if (_width >= 0 && _width <= 599)
     {
         new_form_factor = screenformfactor::PHONE;
     }
-    else if (_width >= 600 && _width < 719)
+    else if (_width >= 600 && _width <= 719)
     {
         new_form_factor = screenformfactor::PHABLET;
     }
-    else if (_width >= 720 && _width < 959)
+    else if (_width >= 720 && _width <= 1239)
     {
         new_form_factor = screenformfactor::TABLET;
     }
-    else if (_width >= 960 && _width < 1919)
+    else if (_width >= 1240 && _width <= 1439)
+    {
+        new_form_factor = screenformfactor::LAPTOP;
+    }
+    else if (_width >= 1440)
     {
         new_form_factor = screenformfactor::DESKTOP;
-    }
-    else if (_width >= 1920)
-    {
-        new_form_factor = screenformfactor::TV;
     }
 
     if (new_form_factor == m_form_factor)
         return;
 
     m_form_factor = new_form_factor;
-    emit form_factor_changed(m_form_factor);
 
     set_is_phone((m_form_factor == screenformfactor::PHONE));
     set_is_phablet((m_form_factor == screenformfactor::PHABLET));
     set_is_tablet((m_form_factor == screenformfactor::TABLET));
+    set_is_laptop((m_form_factor == screenformfactor::LAPTOP));
     set_is_desktop((m_form_factor == screenformfactor::DESKTOP));
-    set_is_tv((m_form_factor == screenformfactor::TV));
+
+    emit form_factor_changed(m_form_factor);
 }
